@@ -1,0 +1,19 @@
+(() => {
+ const key='cinenova-demo-user';
+ const path=location.pathname.split('/').pop()||'index.html';
+ const isLogin=path==='login.html';
+ // Front-end demo gate only. It is not secure authentication; connect Supabase Auth before public launch.
+ if(!isLogin&&!localStorage.getItem(key)){location.replace('login.html');return;}
+ const user=localStorage.getItem(key)||'';
+ document.querySelectorAll('[data-user]').forEach(el=>el.textContent=user||'Guest');
+ document.querySelectorAll('[data-logout]').forEach(el=>el.addEventListener('click',()=>{localStorage.removeItem(key);location.href='login.html'}));
+ const menu=document.querySelector('.mobile-menu'),nav=document.querySelector('.navlinks');if(menu&&nav)menu.addEventListener('click',()=>nav.classList.toggle('open'));
+ const toast=document.querySelector('.toast');function say(s){if(!toast)return;toast.textContent=s;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}
+ const savedKey='cinenova-watchlist';function getSaved(){try{return JSON.parse(localStorage.getItem(savedKey)||'[]')}catch(e){return []}}
+ document.querySelectorAll('[data-save]').forEach(btn=>{const name=btn.dataset.save;const refresh=()=>{btn.textContent=getSaved().includes(name)?'✓ Saved':'＋ Watchlist'};refresh();btn.addEventListener('click',()=>{let arr=getSaved();if(arr.includes(name)){arr=arr.filter(x=>x!==name);say('Removed from watchlist')}else{arr.push(name);say('Added to watchlist')}localStorage.setItem(savedKey,JSON.stringify(arr));refresh()})});
+ const search=document.querySelector('#movieSearch');if(search){const cards=[...document.querySelectorAll('[data-movie]')];const filters=[...document.querySelectorAll('[data-filter]')];let active='all';const render=()=>{let n=0;cards.forEach(c=>{const match=c.dataset.movie.toLowerCase().includes(search.value.toLowerCase());const genre=active==='all'||c.dataset.genre===active;c.hidden=!(match&&genre);if(!c.hidden)n++});const empty=document.querySelector('#emptyMessage');if(empty)empty.hidden=n>0};search.addEventListener('input',render);filters.forEach(f=>f.addEventListener('click',()=>{active=f.dataset.filter;filters.forEach(x=>x.classList.toggle('selected',x===f));render()}));render()}
+ const watchGrid=document.querySelector('#watchGrid');if(watchGrid){const saved=getSaved();if(!saved.length){watchGrid.innerHTML='<div class="empty">Your watchlist is empty. Explore movies and tap ＋ Watchlist to save a title.</div>'}else{watchGrid.innerHTML=saved.map((name,i)=>`<article class="movie-card"><div class="poster ${['','blue','red','gold','teal','pink'][i%6]}"><span>${name}</span></div><div class="movie-info"><div class="movie-title">${name}</div><div class="movie-sub"><span>Saved collection</span><button class="save-btn" data-remove="${name.replaceAll('&','&amp;').replaceAll('"','&quot;')}">Remove</button></div></div></article>`).join('');watchGrid.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem(savedKey,JSON.stringify(getSaved().filter(x=>x!==b.dataset.remove)));location.reload()}))}}
+ const form=document.querySelector('#loginForm');if(form)form.addEventListener('submit',e=>{e.preventDefault();const email=form.email.value.trim();const pass=form.password.value;if(!email||!pass)return;localStorage.setItem(key,email);location.href='index.html'});
+ const signup=document.querySelector('#signupForm');if(signup)signup.addEventListener('submit',e=>{e.preventDefault();const email=signup.email.value.trim();const pass=signup.password.value;if(pass.length<6){say('Password must be at least 6 characters');return}localStorage.setItem(key,email);location.href='index.html'});
+ const contact=document.querySelector('#contactForm');if(contact)contact.addEventListener('submit',e=>{e.preventDefault();say('Thanks! Contact form needs an email service to send messages.');contact.reset()});
+})();
