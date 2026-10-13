@@ -1,521 +1,65 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090b12">
-  <meta name="description" content="CineNova — discover movies and find authorized free streaming options.">
-  <title>CineNova — Discover Your Next Movie</title>
-  <style>
-    :root {
-      --bg: #090b12;
-      --panel: #121622;
-      --muted: #a1a8b9;
-      --text: #f5f6fb;
-      --accent: #a78bfa;
-      --line: rgba(255,255,255,.1);
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
-    }
-    a { color: inherit; text-decoration: none; }
-    button, input { font: inherit; }
-    button, a { -webkit-tap-highlight-color: transparent; }
-
-    .nav {
-      height: 76px;
-      padding: 0 6%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(9,11,18,.9);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      backdrop-filter: blur(18px);
-    }
-    .logo {
-      font-size: 25px;
-      font-weight: 900;
-      letter-spacing: -1.2px;
-    }
-    .logo span { color: var(--accent); }
-    .nav-links { display: flex; gap: 26px; color: #c7c9d5; font-size: 14px; }
-    .nav-links a:hover { color: white; }
-    .nav-cta {
-      background: var(--accent);
-      color: #171025;
-      padding: 11px 17px;
-      border-radius: 10px;
-      font-weight: 800;
-      font-size: 13px;
-    }
-
-    .hero {
-      min-height: 490px;
-      padding: 90px 7% 75px;
-      display: flex;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-      background:
-        radial-gradient(ellipse at 78% 40%, rgba(117,77,219,.28), transparent 37%),
-        radial-gradient(ellipse at 5% 100%, rgba(35,110,160,.16), transparent 35%),
-        linear-gradient(120deg, #0b0d16 15%, #151226 70%, #0c0d16);
-    }
-    .hero::after {
-      content: "CINEMA";
-      position: absolute;
-      right: -25px;
-      bottom: -65px;
-      font-size: clamp(100px, 20vw, 270px);
-      font-weight: 1000;
-      letter-spacing: -15px;
-      color: rgba(255,255,255,.025);
-      pointer-events: none;
-    }
-    .hero-content { max-width: 690px; position: relative; z-index: 1; }
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border: 1px solid rgba(167,139,250,.3);
-      background: rgba(167,139,250,.08);
-      border-radius: 30px;
-      color: #d4c6ff;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-    h1 {
-      font-size: clamp(44px, 7vw, 78px);
-      line-height: .99;
-      letter-spacing: -4px;
-      margin: 25px 0 20px;
-    }
-    h1 span {
-      background: linear-gradient(90deg, #c4b5fd, #8b9dff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .hero p {
-      color: #b4b9c9;
-      line-height: 1.8;
-      max-width: 530px;
-      font-size: 16px;
-    }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
-    .btn {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      padding: 14px 19px;
-      border-radius: 11px;
-      font-weight: 800;
-      font-size: 14px;
-      transition: transform .2s, background .2s;
-      border: 1px solid var(--line);
-      cursor: pointer;
-    }
-    .btn:hover { transform: translateY(-2px); }
-    .btn-primary { background: var(--accent); color: #171025; border-color: transparent; }
-    .btn-secondary { background: rgba(255,255,255,.045); color: white; }
-
-    .trust-row {
-      display: flex;
-      gap: 22px;
-      flex-wrap: wrap;
-      margin-top: 34px;
-      color: #aeb4c5;
-      font-size: 12px;
-    }
-    .trust-row span::before { content: "✓"; color: #b9a6ff; margin-right: 7px; }
-
-    main { padding: 35px 6% 80px; }
-    .section { margin-top: 35px; }
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 16px;
-      margin-bottom: 22px;
-    }
-    .section-head h2 { margin: 0; font-size: 25px; letter-spacing: -.7px; }
-    .section-head p { color: var(--muted); margin: 8px 0 0; font-size: 13px; line-height: 1.6; }
-    .pill {
-      color: #c7b8ff;
-      border: 1px solid rgba(167,139,250,.28);
-      border-radius: 30px;
-      padding: 7px 11px;
-      font-size: 11px;
-      white-space: nowrap;
-    }
-
-    .search-wrap {
-      display: flex;
-      gap: 10px;
-      margin: 20px 0 25px;
-    }
-    .search-wrap input {
-      min-width: 0;
-      flex: 1;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 15px 16px;
-      color: white;
-      background: var(--panel);
-      outline: none;
-    }
-    .search-wrap input:focus { border-color: var(--accent); }
-    .search-wrap button {
-      border: 0;
-      border-radius: 12px;
-      padding: 0 20px;
-      background: var(--accent);
-      color: #171025;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .movie-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 17px;
-    }
-    .movie-card {
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 15px;
-      background: var(--panel);
-      transition: transform .25s, border-color .25s;
-    }
-    .movie-card:hover { transform: translateY(-5px); border-color: rgba(167,139,250,.55); }
-    .poster {
-      aspect-ratio: 3 / 4;
-      display: flex;
-      align-items: end;
-      padding: 17px;
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(145deg, #29213f, #111522 68%);
-    }
-    .poster::before {
-      content: "";
-      position: absolute;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      top: -55px;
-      right: -55px;
-      background: rgba(255,255,255,.08);
-      filter: blur(2px);
-    }
-    .poster::after {
-      content: "";
-      position: absolute;
-      inset: 40% 0 0;
-      background: linear-gradient(transparent, rgba(0,0,0,.65));
-    }
-    .poster .poster-title {
-      position: relative;
-      z-index: 1;
-      font-size: 25px;
-      font-weight: 950;
-      letter-spacing: -1px;
-      line-height: 1.05;
-      overflow-wrap: anywhere;
-    }
-    .poster.purple { background: linear-gradient(145deg, #6248a5, #1a172c 75%); }
-    .poster.blue { background: linear-gradient(145deg, #24698a, #111522 75%); }
-    .poster.rose { background: linear-gradient(145deg, #9d476a, #231521 75%); }
-    .poster.gold { background: linear-gradient(145deg, #9b7435, #211a13 75%); }
-    .poster.teal { background: linear-gradient(145deg, #237f77, #101c21 75%); }
-    .poster.red { background: linear-gradient(145deg, #9b343b, #221216 75%); }
-    .poster.indigo { background: linear-gradient(145deg, #414f9c, #141729 75%); }
-    .poster.silver { background: linear-gradient(145deg, #68758d, #171c29 75%); }
-    .movie-info { padding: 14px; }
-    .movie-info h3 { margin: 0 0 7px; font-size: 15px; }
-    .movie-info p { color: var(--muted); font-size: 12px; margin: 0 0 13px; }
-    .movie-info a {
-      display: block;
-      text-align: center;
-      border: 1px solid var(--line);
-      border-radius: 9px;
-      padding: 10px;
-      font-size: 12px;
-      font-weight: 800;
-    }
-    .movie-info a:hover { background: rgba(167,139,250,.12); }
-    .empty { color: var(--muted); padding: 25px 0; display: none; }
-
-    .source-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 15px;
-    }
-    .source-card {
-      padding: 23px;
-      border: 1px solid var(--line);
-      background: linear-gradient(140deg, #151927, #10121b);
-      border-radius: 15px;
-    }
-    .source-icon { font-size: 25px; }
-    .source-card h3 { margin: 15px 0 9px; font-size: 17px; }
-    .source-card p { color: var(--muted); line-height: 1.7; font-size: 13px; min-height: 62px; }
-    .source-card a { display: inline-block; color: #c7b8ff; font-weight: 800; font-size: 13px; margin-top: 5px; }
-
-    .notice {
-      border: 1px solid rgba(167,139,250,.2);
-      background: rgba(167,139,250,.055);
-      color: #c2c5d2;
-      padding: 17px 19px;
-      border-radius: 12px;
-      font-size: 12px;
-      line-height: 1.8;
-      margin-top: 28px;
-    }
-    footer {
-      border-top: 1px solid var(--line);
-      padding: 28px 6%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 15px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    footer strong { color: white; font-size: 16px; }
-
-    @media (max-width: 850px) {
-      .movie-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .source-grid { grid-template-columns: 1fr; }
-      .source-card p { min-height: auto; }
-      .nav { padding: 0 5%; }
-      .nav-links { gap: 13px; }
-    }
-    @media (max-width: 520px) {
-      .nav { height: 65px; }
-      .logo { font-size: 21px; }
-      .nav-links { display: none; }
-      .hero { min-height: 440px; padding: 65px 6%; }
-      h1 { letter-spacing: -2.5px; }
-      main { padding: 25px 5% 55px; }
-      .section-head h2 { font-size: 22px; }
-      .search-wrap { flex-direction: column; }
-      .search-wrap button { padding: 14px; }
-      .poster .poster-title { font-size: 22px; }
-      .movie-grid { gap: 11px; }
-      .movie-info { padding: 11px; }
-    }
-  </style>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#080911">
+<meta name="description" content="CineNova — discover global cinema, explore trending films, and find authorized free streaming options.">
+<title>CineNova — Cinema, Without Borders</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080911;--panel:#11131f;--panel2:#171a29;--text:#f7f7fb;--muted:#a3a6bb;--purple:#a78bfa;--pink:#ee8bc5;--line:rgba(255,255,255,.09);--max:1380px}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:95px}body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 80% 0%,rgba(107,76,185,.13),transparent 38%),radial-gradient(ellipse at 0% 45%,rgba(46,89,155,.09),transparent 35%)}a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}.wrap{width:min(var(--max),92%);margin:auto}.topline{height:32px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#6f4fbd,#a36ebd,#6c72ce);font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#fff}.nav{position:sticky;top:0;z-index:20;background:rgba(8,9,17,.83);backdrop-filter:blur(22px);border-bottom:1px solid var(--line)}.nav-inner{height:76px;display:flex;align-items:center;gap:34px}.logo{font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:700;letter-spacing:-1.5px;white-space:nowrap}.logo .mark{color:var(--purple)}.navlinks{display:flex;align-items:center;gap:27px;color:#c3c4d3;font-size:13px;flex:1}.navlinks a{transition:color .2s}.navlinks a:hover,.navlinks a.active{color:white}.navright{display:flex;align-items:center;gap:12px}.search-mini{display:flex;align-items:center;gap:9px;color:#c9c9d5;border:1px solid var(--line);background:rgba(255,255,255,.035);padding:10px 13px;border-radius:12px;min-width:165px}.search-mini input{background:none;border:0;outline:0;color:white;width:100%;min-width:0;font-size:12px}.watchlist-link{font-size:12px;color:#ddd7ff;border:1px solid rgba(167,139,250,.3);padding:10px 13px;border-radius:11px;white-space:nowrap}.mobile-menu{display:none;background:none;color:white;border:0;font-size:23px}.hero{min-height:610px;position:relative;isolation:isolate;display:flex;align-items:center;overflow:hidden;border-bottom:1px solid var(--line)}.hero-image{position:absolute;inset:0;z-index:-2;background-image:linear-gradient(90deg,#080911 0%,rgba(8,9,17,.95) 24%,rgba(8,9,17,.55) 55%,rgba(8,9,17,.22) 100%),linear-gradient(0deg,#080911 0%,transparent 45%),url('https://images.unsplash.com/photo-1489599849927-2ee91dade6f2?auto=format&fit=crop&w=2200&q=90');background-size:cover;background-position:center 48%;transform:scale(1.02);animation:heroReveal 1.2s ease both}.hero-content{padding:80px 0 95px;max-width:700px;animation:rise .8s ease both}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(196,174,255,.32);background:rgba(123,91,195,.18);color:#ded3ff;border-radius:30px;font-size:10px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase}.live-dot{height:6px;width:6px;border-radius:50%;background:#d6c5ff;box-shadow:0 0 14px #b59aff}h1,h2,h3,p{margin-top:0}h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(48px,7vw,91px);line-height:.98;letter-spacing:-5px;margin:24px 0 22px;max-width:700px}h1 span{background:linear-gradient(90deg,#f9f5ff,#c7b5ff 55%,#ecb4de);-webkit-background-clip:text;background-clip:text;color:transparent}.hero-copy{color:#c4c5d4;max-width:510px;line-height:1.85;font-size:15px}.hero-meta{display:flex;align-items:center;gap:13px;color:#d4d3e0;font-size:12px;margin-top:24px}.hero-meta .rating{color:#f3d49b}.meta-sep{height:4px;width:4px;background:#8e8fa1;border-radius:50%}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.btn{border:1px solid var(--line);border-radius:12px;padding:14px 19px;display:inline-flex;align-items:center;justify-content:center;gap:9px;font-weight:700;font-size:13px;transition:transform .2s,border-color .2s,background .2s}.btn:hover{transform:translateY(-2px)}.btn-primary{background:linear-gradient(135deg,#c2adff,#a78bfa);color:#181125;border-color:transparent;box-shadow:0 10px 35px rgba(139,106,222,.2)}.btn-glass{background:rgba(255,255,255,.07);backdrop-filter:blur(10px)}.hero-note{margin-top:24px;color:#a4a5b8;font-size:11px}.hero-note b{color:#e1d8ff}.hero-side-label{position:absolute;right:4%;bottom:65px;color:rgba(255,255,255,.7);font-size:10px;letter-spacing:3px;writing-mode:vertical-rl;text-transform:uppercase}.content{padding:0 0 80px}.quickbar{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);background:rgba(18,20,33,.84);border-radius:18px;margin-top:-28px;position:relative;z-index:2;overflow:hidden;box-shadow:0 25px 70px rgba(0,0,0,.24)}.quick{display:flex;align-items:center;gap:13px;padding:21px 24px;border-right:1px solid var(--line)}.quick:last-child{border:0}.quick-icon{height:39px;width:39px;display:grid;place-items:center;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.16);border-radius:12px;color:#d4c5ff;font-size:17px;flex-shrink:0}.quick strong{display:block;font-size:12px;margin-bottom:4px}.quick small{color:var(--muted);font-size:10px}.section{margin-top:72px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:23px}.kicker{font-size:10px;color:#bda9ff;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:10px}.section-head h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(25px,3vw,34px);letter-spacing:-1.4px;margin:0}.section-head p{color:var(--muted);font-size:12px;margin:8px 0 0;line-height:1.7}.text-link{color:#d0c1ff;font-size:12px;font-weight:700;white-space:nowrap}.text-link:hover{color:white}.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}.filter{border:1px solid var(--line);background:rgba(255,255,255,.025);color:#bcbfd0;border-radius:30px;padding:9px 14px;font-size:11px;transition:all .2s}.filter:hover,.filter.selected{background:#c2adff;color:#191127;border-color:#c2adff}.movie-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:17px}.movie-card{min-width:0;position:relative;transition:transform .25s}.movie-card:hover{transform:translateY(-6px)}.poster{position:relative;aspect-ratio:2/3;border-radius:13px;overflow:hidden;background:#191b2b;border:1px solid rgba(255,255,255,.08);isolation:isolate}.poster img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .55s;filter:saturate(.88)}.movie-card:hover .poster img{transform:scale(1.06);filter:saturate(1.08)}.poster:after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.7));z-index:1;pointer-events:none}.poster-placeholder{height:100%;display:flex;align-items:end;padding:15px;font-family:'Space Grotesk',sans-serif;font-size:25px;line-height:1;font-weight:700;letter-spacing:-1px;background:radial-gradient(circle at 70% 20%,rgba(255,255,255,.23),transparent 28%),linear-gradient(145deg,#52437f,#191b2c 70%);position:relative}.poster-placeholder:after{content:"";position:absolute;width:150px;height:150px;border:1px solid rgba(255,255,255,.16);border-radius:50%;top:10%;right:-25%;box-shadow:0 0 0 18px rgba(255,255,255,.025),0 0 0 38px rgba(255,255,255,.02)}.poster-placeholder span{position:relative;z-index:2}.poster-placeholder.blue{background:linear-gradient(145deg,#397c9c,#151a30 75%)}.poster-placeholder.red{background:linear-gradient(145deg,#a34e5e,#20121e 75%)}.poster-placeholder.gold{background:linear-gradient(145deg,#a27b42,#241a17 75%)}.poster-placeholder.teal{background:linear-gradient(145deg,#2f887e,#111e25 75%)}.poster-placeholder.pink{background:linear-gradient(145deg,#a45d93,#24162a 75%)}.poster-placeholder.orange{background:linear-gradient(145deg,#b36a38,#241a17 75%)}.poster-badge{position:absolute;top:10px;left:10px;z-index:3;padding:6px 8px;background:rgba(9,10,18,.78);border:1px solid rgba(255,255,255,.12);border-radius:7px;font-size:9px;font-weight:700;backdrop-filter:blur(8px)}.save-btn{position:absolute;top:9px;right:9px;z-index:4;width:31px;height:31px;border:1px solid rgba(255,255,255,.2);background:rgba(8,9,17,.7);color:white;border-radius:50%;font-size:17px;display:grid;place-items:center}.save-btn.saved{background:#c2adff;color:#181125}.movie-info{padding:12px 2px 0}.movie-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:7px}.movie-sub{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:10px}.movie-sub .stars{color:#f4d49b}.poster-action{display:none;position:absolute;inset:0;z-index:2;align-items:center;justify-content:center}.movie-card:hover .poster-action{display:flex}.play-circle{height:44px;width:44px;display:grid;place-items:center;border-radius:50%;background:rgba(194,173,255,.94);color:#171024;box-shadow:0 8px 30px #0006;font-size:17px}.feature-band{display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center;border:1px solid var(--line);border-radius:22px;padding:35px;background:linear-gradient(115deg,#19162b,#10131f 60%,#151326);overflow:hidden;position:relative}.feature-band:after{content:"CN";font-family:'Space Grotesk',sans-serif;position:absolute;right:2%;bottom:-70px;font-size:220px;font-weight:700;color:rgba(255,255,255,.025);pointer-events:none}.feature-copy{position:relative;z-index:1}.feature-copy h2{font:700 clamp(28px,3vw,42px)/1.08 'Space Grotesk',sans-serif;letter-spacing:-1.5px;margin:12px 0 16px}.feature-copy p{font-size:13px;line-height:1.85;color:#b6b8c9;max-width:470px}.feature-art{min-height:260px;position:relative;display:flex;align-items:center;justify-content:center;gap:14px;transform:rotate(-4deg)}.art-poster{width:31%;aspect-ratio:2/3;border-radius:12px;box-shadow:0 20px 45px #0008;border:1px solid #ffffff2b;overflow:hidden;background:linear-gradient(145deg,#6e55a6,#161827);display:flex;align-items:end;padding:12px;font:700 19px/1 'Space Grotesk',sans-serif}.art-poster:nth-child(2){transform:translateY(-20px) scale(1.1);background:linear-gradient(145deg,#a05c77,#241625)}.art-poster:nth-child(3){background:linear-gradient(145deg,#a77a3c,#21191a)}.category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.category{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:15px;min-height:150px;padding:20px;display:flex;flex-direction:column;justify-content:end;background:linear-gradient(135deg,#22203b,#10121d);transition:transform .2s,border-color .2s}.category:hover{transform:translateY(-4px);border-color:#9f8ae3}.category:before{content:"";position:absolute;width:150px;height:150px;right:-32px;top:-42px;border:1px solid #ffffff15;border-radius:50%;box-shadow:0 0 0 20px #ffffff05,0 0 0 40px #ffffff03}.category:nth-child(2){background:linear-gradient(135deg,#3c263d,#15121e)}.category:nth-child(3){background:linear-gradient(135deg,#1e3a49,#11151e)}.category:nth-child(4){background:linear-gradient(135deg,#4b3824,#17151a)}.category:nth-child(5){background:linear-gradient(135deg,#1c4641,#10191b)}.category:nth-child(6){background:linear-gradient(135deg,#3d294d,#171321)}.category:nth-child(7){background:linear-gradient(135deg,#4c282b,#1a1217)}.category:nth-child(8){background:linear-gradient(135deg,#27324f,#111522)}.category .cat-icon{font-size:22px;margin-bottom:18px;position:relative}.category strong{font-size:15px;position:relative}.category small{font-size:10px;color:#b5b6c8;margin-top:5px;position:relative}.free-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.free-card{padding:24px;border-radius:17px;background:linear-gradient(145deg,#151827,#10121b);border:1px solid var(--line);transition:transform .2s,border-color .2s}.free-card:hover{transform:translateY(-4px);border-color:#6f6491}.free-icon{height:46px;width:46px;display:grid;place-items:center;background:rgba(167,139,250,.13);border-radius:13px;font-size:22px;margin-bottom:19px}.free-card h3{font-size:16px;margin-bottom:8px}.free-card p{font-size:12px;color:var(--muted);line-height:1.8;min-height:62px}.free-card a{font-size:12px;font-weight:700;color:#d0c0ff}.free-card a:hover{color:white}.newsletter{display:flex;justify-content:space-between;align-items:center;gap:30px;padding:30px 34px;border-radius:18px;background:linear-gradient(105deg,rgba(125,92,190,.2),rgba(37,45,81,.26));border:1px solid rgba(167,139,250,.18)}.newsletter h3{font:700 23px 'Space Grotesk',sans-serif;letter-spacing:-.7px;margin:0 0 8px}.newsletter p{font-size:12px;color:var(--muted);margin:0;line-height:1.6}.newsletter-form{display:flex;gap:8px;max-width:410px;width:100%}.newsletter-form input{min-width:0;flex:1;border:1px solid var(--line);background:#0c0e18;color:white;padding:13px;border-radius:10px;outline:0;font-size:12px}.newsletter-form button{border:0;background:#c2adff;color:#191127;border-radius:10px;padding:0 15px;font-weight:700;font-size:12px}.footer{border-top:1px solid var(--line);padding:40px 0 22px;background:#07080f}.footer-top{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:35px;padding-bottom:35px}.footer-brand p{font-size:12px;line-height:1.8;color:var(--muted);max-width:300px;margin:15px 0}.footer h4{font-size:12px;margin:7px 0 17px}.footer-col a{display:block;font-size:11px;color:var(--muted);margin:12px 0}.footer-col a:hover{color:white}.footer-bottom{border-top:1px solid var(--line);padding-top:19px;display:flex;justify-content:space-between;gap:15px;color:#777b90;font-size:10px;line-height:1.7}.legal{max-width:650px}.toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#e0d5ff;color:#191127;padding:12px 18px;border-radius:12px;z-index:50;font-size:12px;font-weight:700;transition:all .25s;box-shadow:0 12px 35px #0007}.toast.show{opacity:1;transform:translate(-50%,0)}.empty-state{grid-column:1/-1;border:1px dashed var(--line);padding:35px;text-align:center;border-radius:15px;color:var(--muted);font-size:13px}.reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s ease}.reveal.visible{opacity:1;transform:translateY(0)}@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes heroReveal{from{opacity:.3;transform:scale(1.07)}to{opacity:1;transform:scale(1.02)}}
+@media(max-width:1100px){.movie-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.quick{padding:17px}.quick small{font-size:9px}.nav-inner{gap:20px}.navlinks{gap:17px}.search-mini{min-width:130px}.feature-band{padding:27px}.category-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:760px){.topline{font-size:9px;letter-spacing:.7px;text-align:center;padding:0 10px}.nav-inner{height:66px;gap:12px}.navlinks{display:none;position:absolute;top:66px;left:0;right:0;padding:18px 5%;background:#0d0e19;border-bottom:1px solid var(--line);flex-direction:column;align-items:flex-start}.navlinks.open{display:flex}.mobile-menu{display:block}.navright{margin-left:auto}.search-mini{min-width:0;padding:10px;width:42px;justify-content:center}.search-mini input{display:none}.watchlist-link{display:none}.logo{font-size:24px}.hero{min-height:570px}.hero-image{background-position:58% center;background-image:linear-gradient(90deg,rgba(8,9,17,.95),rgba(8,9,17,.65)),linear-gradient(0deg,#080911,transparent 60%),url('https://images.unsplash.com/photo-1489599849927-2ee91dade6f2?auto=format&fit=crop&w=1400&q=85')}.hero-content{padding:70px 0 95px}.hero-side-label{display:none}h1{letter-spacing:-3px}.quickbar{grid-template-columns:repeat(2,1fr);margin-top:-24px}.quick:nth-child(2){border-right:0}.quick:nth-child(-n+2){border-bottom:1px solid var(--line)}.quick{padding:15px 13px;gap:9px}.quick-icon{height:34px;width:34px}.quick strong{font-size:11px}.quick small{font-size:9px}.section{margin-top:55px}.movie-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.movie-title{font-size:12px}.movie-sub{font-size:9px}.poster-badge{font-size:8px;top:7px;left:7px}.save-btn{top:6px;right:6px;width:28px;height:28px}.feature-band{grid-template-columns:1fr;gap:10px;padding:25px}.feature-art{min-height:190px;max-width:400px;width:100%;margin:auto}.category-grid{grid-template-columns:repeat(2,1fr);gap:10px}.category{min-height:130px;padding:15px}.free-grid{grid-template-columns:1fr}.free-card p{min-height:0}.newsletter{align-items:flex-start;flex-direction:column;padding:24px}.newsletter-form{max-width:none}.footer-top{grid-template-columns:repeat(2,1fr);gap:25px}.footer-brand{grid-column:1/-1}.footer-bottom{flex-direction:column}.section-head{align-items:flex-start}.pill{display:none}}
+@media(max-width:420px){.wrap{width:91%}.hero{min-height:550px}.hero-copy{font-size:13px}.hero-meta{gap:8px;flex-wrap:wrap;font-size:10px}.actions .btn{padding:13px 14px;font-size:12px}.movie-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.movie-title{font-size:13px}.movie-sub{font-size:10px}.section-head h2{font-size:25px}.footer-top{gap:20px}.feature-copy h2{font-size:31px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
 </head>
 <body>
-  <header class="nav">
-    <a class="logo" href="#">Cine<span>Nova</span></a>
-    <nav class="nav-links">
-      <a href="#discover">Discover</a>
-      <a href="#free">Watch Free</a>
-      <a href="#sources">Sources</a>
-    </nav>
-    <a class="nav-cta" href="#free">Explore Movies ↗</a>
-  </header>
+<div class="topline">Your next great movie is one discovery away · Explore cinema worldwide</div>
+<header class="nav"><div class="wrap nav-inner">
+<a class="logo" href="#home" aria-label="CineNova home">Cine<span class="mark">Nova</span><span style="font-size:9px;letter-spacing:2px;color:#a5a7bd;vertical-align:top;margin-left:4px">™</span></a>
+<nav class="navlinks" id="navlinks"><a class="active" href="#home">Home</a><a href="#trending">Discover</a><a href="#genres">Genres</a><a href="#free">Watch Free</a><a href="#about">About</a></nav>
+<div class="navright"><label class="search-mini" aria-label="Search movies"><span>⌕</span><input id="topSearch" type="search" placeholder="Search titles..." autocomplete="off"></label><a class="watchlist-link" href="#trending" id="watchlistNav">♡ Watchlist <span id="savedCount">0</span></a><button class="mobile-menu" id="mobileMenu" aria-label="Toggle navigation">☰</button></div>
+</div></header>
+<section class="hero" id="home"><div class="hero-image"></div><div class="wrap"><div class="hero-content"><div class="eyebrow"><span class="live-dot"></span> A world of stories awaits</div><h1>Stories worth<br><span>staying up for.</span></h1><p class="hero-copy">From the biggest blockbusters to hidden gems, explore the movies everyone is talking about and discover your next unforgettable watch.</p><div class="hero-meta"><span class="rating">★  Curated discovery</span><span class="meta-sep"></span><span>Global cinema</span><span class="meta-sep"></span><span>New stories daily</span></div><div class="actions"><a class="btn btn-primary" href="#trending">Explore the collection <span>↗</span></a><a class="btn btn-glass" href="#free"><span>▷</span> Find free movies</a></div><div class="hero-note"><b>Discover smarter.</b> Find official sources and explore with confidence.</div></div></div><div class="hero-side-label">Cinema · Culture · Discovery</div></section>
+<main class="content"><div class="wrap">
+<div class="quickbar reveal"><div class="quick"><div class="quick-icon">✦</div><div><strong>Explore worldwide</strong><small>Stories across languages</small></div></div><div class="quick"><div class="quick-icon">⌕</div><div><strong>Discover your next watch</strong><small>Find films by mood and genre</small></div></div><div class="quick"><div class="quick-icon">♡</div><div><strong>Build your watchlist</strong><small>Save titles for later</small></div></div><div class="quick"><div class="quick-icon">▷</div><div><strong>Official watch options</strong><small>Find authorized sources</small></div></div></div>
+<section class="section reveal" id="trending"><div class="section-head"><div><div class="kicker">Handpicked for your next movie night</div><h2>Explore the collection</h2><p>Browse our starter showcase. Live movie data will be connected in the next setup step.</p></div><a class="text-link" href="#genres">Browse by genre ↗</a></div>
+<div class="filters" id="filters"><button class="filter selected" data-filter="all">All collections</button><button class="filter" data-filter="bollywood">Bollywood</button><button class="filter" data-filter="hollywood">Hollywood</button><button class="filter" data-filter="south">South Indian</button><button class="filter" data-filter="classic">Classics</button><button class="filter" data-filter="documentary">Documentary</button></div>
+<div class="movie-grid" id="movieGrid">
+<article class="movie-card" data-title="Bollywood Hindi cinema" data-category="bollywood"><div class="poster"><div class="poster-placeholder pink"><span>Hindi<br>Cinema</span></div><span class="poster-badge">BOLLYWOOD</span><button class="save-btn" aria-label="Save Bollywood collection" data-save="Bollywood Collection">＋</button><div class="poster-action"><a class="play-circle" href="https://www.youtube.com/results?search_query=official+full+Hindi+movie" target="_blank" rel="noopener" aria-label="Find Hindi movies">▷</a></div></div><div class="movie-info"><div class="movie-title">Bollywood Collection</div><div class="movie-sub"><span>Hindi · India</span><span class="stars">✦ Explore</span></div></div></article>
+<article class="movie-card" data-title="Hollywood international cinema" data-category="hollywood"><div class="poster"><div class="poster-placeholder blue"><span>Hollywood</span></div><span class="poster-badge">WORLD CINEMA</span><button class="save-btn" aria-label="Save Hollywood collection" data-save="Hollywood Collection">＋</button><div class="poster-action"><a class="play-circle" href="https://www.youtube.com/results?search_query=official+free+full+Hollywood+movie" target="_blank" rel="noopener" aria-label="Find Hollywood movies">▷</a></div></div><div class="movie-info"><div class="movie-title">Hollywood Collection</div><div class="movie-sub"><span>English · Global</span><span class="stars">✦ Explore</span></div></div></article>
+<article class="movie-card" data-title="South Indian Tamil Telugu Malayalam cinema" data-category="south"><div class="poster"><div class="poster-placeholder red"><span>South<br>Cinema</span></div><span class="poster-badge">SOUTH INDIAN</span><button class="save-btn" aria-label="Save South Indian collection" data-save="South Indian Collection">＋</button><div class="poster-action"><a class="play-circle" href="https://www.youtube.com/results?search_query=official+full+South+Indian+movie" target="_blank" rel="noopener" aria-label="Find South Indian movies">▷</a></div></div><div class="movie-info"><div class="movie-title">South Indian Collection</div><div class="movie-sub"><span>Tamil · Telugu</span><span class="stars">✦ Explore</span></div></div></article>
+<article class="movie-card" data-title="Classic public domain movies" data-category="classic"><div class="poster"><div class="poster-placeholder gold"><span>Classic<br>Stories</span></div><span class="poster-badge">TIMELESS</span><button class="save-btn" aria-label="Save classic collection" data-save="Classic Cinema">＋</button><div class="poster-action"><a class="play-circle" href="https://archive.org/details/movies" target="_blank" rel="noopener" aria-label="Explore archive films">▷</a></div></div><div class="movie-info"><div class="movie-title">Classic Cinema</div><div class="movie-sub"><span>Timeless films</span><span class="stars">✦ Explore</span></div></div></article>
+<article class="movie-card" data-title="Documentary true stories" data-category="documentary"><div class="poster"><div class="poster-placeholder teal"><span>True<br>Stories</span></div><span class="poster-badge">DOCUMENTARY</span><button class="save-btn" aria-label="Save documentary collection" data-save="Documentaries">＋</button><div class="poster-action"><a class="play-circle" href="https://www.youtube.com/results?search_query=official+free+full+documentary" target="_blank" rel="noopener" aria-label="Find documentaries">▷</a></div></div><div class="movie-info"><div class="movie-title">Documentaries</div><div class="movie-sub"><span>Real stories</span><span class="stars">✦ Explore</span></div></div></article>
+<article class="movie-card" data-title="Independent world cinema" data-category="classic"><div class="poster"><div class="poster-placeholder orange"><span>Indie<br>Films</span></div><span class="poster-badge">HIDDEN GEMS</span><button class="save-btn" aria-label="Save indie collection" data-save="Independent Cinema">＋</button><div class="poster-action"><a class="play-circle" href="https://archive.org/details/movies" target="_blank" rel="noopener" aria-label="Explore independent films">▷</a></div></div><div class="movie-info"><div class="movie-title">Independent Cinema</div><div class="movie-sub"><span>Discover · Indie</span><span class="stars">✦ Explore</span></div></div></article>
+</div><p id="emptyMessage" class="empty-state" hidden>No collections match that search. Try another title or filter.</p>
+</section>
+<section class="section reveal" id="about"><div class="feature-band"><div class="feature-copy"><div class="kicker">A little less scrolling. A lot more cinema.</div><h2>Your next favourite<br>film is out there.</h2><p>CineNova is being built as a home for curious movie fans: a place to discover titles from different industries, keep track of what catches your eye, and find official places to watch.</p><div class="actions"><a class="btn btn-primary" href="#genres">Find your genre ↗</a></div></div><div class="feature-art" aria-hidden="true"><div class="art-poster">Beyond<br>the frame</div><div class="art-poster">Stories<br>unbound</div><div class="art-poster">New<br>worlds</div></div></div></section>
+<section class="section reveal" id="genres"><div class="section-head"><div><div class="kicker">Pick your mood</div><h2>Explore by genre</h2><p>Jump into the kind of story you feel like watching today.</p></div></div><div class="category-grid"><a class="category" href="#trending" data-genre="hollywood"><span class="cat-icon">⚡</span><strong>Action</strong><small>Fast-paced favourites</small></a><a class="category" href="#trending" data-genre="bollywood"><span class="cat-icon">♡</span><strong>Romance</strong><small>Stories that stay with you</small></a><a class="category" href="#trending" data-genre="classic"><span class="cat-icon">◉</span><strong>Thriller</strong><small>Keep guessing</small></a><a class="category" href="#trending" data-genre="south"><span class="cat-icon">✦</span><strong>Drama</strong><small>Big feelings, great stories</small></a><a class="category" href="#trending" data-genre="documentary"><span class="cat-icon">◎</span><strong>Documentary</strong><small>Real lives, new perspectives</small></a><a class="category" href="#trending" data-genre="hollywood"><span class="cat-icon">☄</span><strong>Sci-Fi</strong><small>Beyond the imaginable</small></a><a class="category" href="#trending" data-genre="bollywood"><span class="cat-icon">☀</span><strong>Comedy</strong><small>Good mood guaranteed</small></a><a class="category" href="#trending" data-genre="classic"><span class="cat-icon">▣</span><strong>Classics</strong><small>Timeless cinema</small></a></div></section>
+<section class="section reveal" id="free"><div class="section-head"><div><div class="kicker">Watch thoughtfully</div><h2>Find official free movies</h2><p>Explore platforms that may offer free films. Availability and viewing rights vary by title and region.</p></div><span class="pill">AUTHORIZED SOURCES</span></div><div class="free-grid"><article class="free-card"><div class="free-icon">▶</div><h3>YouTube Official Channels</h3><p>Search for full movies uploaded by studios and authorized distributors, including selected Hindi films.</p><a href="https://www.youtube.com/results?search_query=official+full+Hindi+movie" target="_blank" rel="noopener">Explore official Hindi movies ↗</a></article><article class="free-card"><div class="free-icon">▧</div><h3>Internet Archive</h3><p>Explore historical and public-domain film collections. Verify the rights and licence of each individual title.</p><a href="https://archive.org/details/movies" target="_blank" rel="noopener">Explore the archive ↗</a></article><article class="free-card"><div class="free-icon">🍿</div><h3>Tubi</h3><p>A free, ad-supported streaming service with a catalogue that varies by country and licensing availability.</p><a href="https://tubitv.com/category/indian_cinema" target="_blank" rel="noopener">Explore Indian cinema ↗</a></article></div><div class="notice" style="margin-top:18px;padding:15px 17px;border:1px solid var(--line);border-radius:12px;color:var(--muted);font-size:11px;line-height:1.8">CineNova currently links to external discovery sources. A movie being free to watch on another platform does not automatically grant permission to host, rebroadcast, or embed it here.</div></section>
+<section class="section reveal"><div class="newsletter"><div><h3>Keep your next watch close.</h3><p>Save interesting collections to your browser watchlist. No account needed for this demo.</p></div><form class="newsletter-form" id="newsletterForm"><input id="newsletterEmail" type="email" placeholder="Your email address" aria-label="Email address" required><button type="submit">Notify me ↗</button></form></div></section>
+</div></main>
+<footer class="footer"><div class="wrap"><div class="footer-top"><div class="footer-brand"><a class="logo" href="#home">Cine<span class="mark">Nova</span></a><p>A growing movie discovery destination for curious viewers everywhere. Find stories, explore genres, and follow official paths to watch.</p></div><div class="footer-col"><h4>Explore</h4><a href="#trending">Discover movies</a><a href="#genres">Genres</a><a href="#free">Watch free</a></div><div class="footer-col"><h4>CineNova</h4><a href="#about">About us</a><a href="mailto:hello@cinenova.example">Contact</a><a href="#home">Back to top ↑</a></div><div class="footer-col"><h4>Important</h4><a href="#free">Official sources</a><a href="#about">Our mission</a><a href="#free">Viewing availability</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> CineNova. All rights reserved.</span><span class="legal">Movie titles, availability, and streaming rights belong to their respective owners. This starter showcase does not host full-length movies.</span></div></div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+ const cards=[...document.querySelectorAll('.movie-card')],filters=[...document.querySelectorAll('.filter')],searchInputs=[document.getElementById('topSearch')],grid=document.getElementById('movieGrid'),empty=document.getElementById('emptyMessage');
+ const toast=document.getElementById('toast');let toastTimer;let activeFilter='all';
+ function say(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2400)}
+ function getSaved(){try{return JSON.parse(localStorage.getItem('cinenova-watchlist')||'[]')}catch(e){return []}}
+ function saveSaved(items){try{localStorage.setItem('cinenova-watchlist',JSON.stringify(items))}catch(e){}}
+ function updateSaved(){const saved=getSaved();document.getElementById('savedCount').textContent=saved.length;document.querySelectorAll('[data-save]').forEach(btn=>{const on=saved.includes(btn.dataset.save);btn.classList.toggle('saved',on);btn.textContent=on?'✓':'＋';btn.setAttribute('aria-pressed',String(on))})}
+ function render(){const q=(searchInputs[0].value||'').trim().toLowerCase();let count=0;cards.forEach(card=>{const matchText=(card.dataset.title+' '+card.innerText).toLowerCase().includes(q);const matchFilter=activeFilter==='all'||card.dataset.category===activeFilter;card.hidden=!(matchText&&matchFilter);if(!card.hidden)count++});empty.hidden=count>0;grid.style.display=count?'grid':'none'}
+ filters.forEach(btn=>btn.addEventListener('click',()=>{activeFilter=btn.dataset.filter;filters.forEach(f=>f.classList.toggle('selected',f===btn));render()}));
+ searchInputs.forEach(input=>input.addEventListener('input',()=>{searchInputs.forEach(other=>{if(other!==input)other.value=input.value});render();document.getElementById('trending').scrollIntoView({behavior:'smooth',block:'start'})}));
+ document.querySelectorAll('[data-save]').forEach(btn=>btn.addEventListener('click',()=>{const name=btn.dataset.save;let saved=getSaved();if(saved.includes(name)){saved=saved.filter(item=>item!==name);say('Removed from your watchlist')}else{saved.push(name);say('Added to your watchlist')}saveSaved(saved);updateSaved()}));
+ document.querySelectorAll('[data-genre]').forEach(link=>link.addEventListener('click',()=>{activeFilter=link.dataset.genre;filters.forEach(f=>f.classList.toggle('selected',f.dataset.filter===activeFilter));render()}));
+ document.getElementById('watchlistNav').addEventListener('click',e=>{e.preventDefault();const saved=getSaved();if(!saved.length){say('Your watchlist is empty — tap ＋ on a collection to save it.');return}say('Saved: '+saved.join(', '))});
+ const menu=document.getElementById('mobileMenu'),nav=document.getElementById('navlinks');menu.addEventListener('click',()=>nav.classList.toggle('open'));nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
+ document.getElementById('newsletterForm').addEventListener('submit',e=>{e.preventDefault();say('Thanks! Email signup needs a mailing-list service to go live.');e.target.reset()});
+ document.getElementById('year').textContent=new Date().getFullYear();updateSaved();render();
+ if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');observer.unobserve(entry.target)}}),{threshold:.08});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el))}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'))}
+})();
+</script>
+</body></html>
 
-  <section class="hero">
-    <div class="hero-content">
-      <div class="eyebrow">✦ YOUR MOVIE UNIVERSE</div>
-      <h1>Find your next<br><span>favourite film.</span></h1>
-      <p>
-        Explore cinema from around the world, discover your next watch,
-        and find official sources offering movies for free.
-      </p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#discover">Explore Collection →</a>
-        <a class="btn btn-secondary" href="#free">Find Free Movies ↗</a>
-      </div>
-      <div class="trust-row">
-        <span>Discover movies</span>
-        <span>Official sources</span>
-        <span>Built for movie fans</span>
-      </div>
-    </div>
-  </section>
-
-  <main>
-    <section class="section" id="discover">
-      <div class="section-head">
-        <div>
-          <h2>Discover Movies</h2>
-          <p>Explore titles and search for their official availability.</p>
-        </div>
-        <span class="pill">CINENOVA COLLECTION</span>
-      </div>
-
-      <div class="search-wrap">
-        <input id="movieSearch" type="search" placeholder="Search a movie title..." aria-label="Search movie titles">
-        <button id="searchButton" type="button">Search</button>
-      </div>
-
-      <div class="movie-grid" id="movieGrid">
-        <article class="movie-card" data-title="Bollywood Hindi cinema">
-          <div class="poster purple"><div class="poster-title">Hindi<br>Cinema</div></div>
-          <div class="movie-info">
-            <h3>Bollywood Collection</h3>
-            <p>Hindi · Indian cinema</p>
-            <a href="https://www.youtube.com/results?search_query=official+full+Hindi+movie" target="_blank" rel="noopener noreferrer">Find Official Movies ↗</a>
-          </div>
-        </article>
-
-        <article class="movie-card" data-title="Hollywood international cinema">
-          <div class="poster blue"><div class="poster-title">Hollywood</div></div>
-          <div class="movie-info">
-            <h3>Hollywood Collection</h3>
-            <p>English · International</p>
-            <a href="https://www.youtube.com/results?search_query=official+full+Hollywood+movie+free" target="_blank" rel="noopener noreferrer">Find Official Movies ↗</a>
-          </div>
-        </article>
-
-        <article class="movie-card" data-title="South Indian Tamil Telugu cinema">
-          <div class="poster rose"><div class="poster-title">South<br>Cinema</div></div>
-          <div class="movie-info">
-            <h3>South Indian Collection</h3>
-            <p>Tamil · Telugu · Malayalam</p>
-            <a href="https://www.youtube.com/results?search_query=official+full+South+Indian+movie" target="_blank" rel="noopener noreferrer">Find Official Movies ↗</a>
-          </div>
-        </article>
-
-        <article class="movie-card" data-title="Classic public domain movies">
-          <div class="poster gold"><div class="poster-title">Classics</div></div>
-          <div class="movie-info">
-            <h3>Classic Cinema</h3>
-            <p>Explore older films</p>
-            <a href="https://archive.org/details/movies" target="_blank" rel="noopener noreferrer">Explore Archive ↗</a>
-          </div>
-        </article>
-
-        <article class="movie-card" data-title="Documentaries real stories">
-          <div class="poster teal"><div class="poster-title">Stories</div></div>
-          <div class="movie-info">
-            <h3>Documentaries</h3>
-            <p>Real stories · Learning</p>
-            <a href="https://www.youtube.com/results?search_query=official+free+full+documentary" target="_blank" rel="noopener noreferrer">Find Official Films ↗</a>
-          </div>
-        </article>
-
-        <article class="movie-card" data-title="Action adventure films">
-          <div class="poster red"><div class="poster-title">Action</div></div>
-          <div class="movie-info">
-            <h3>Action & Adventure</h3>
-            <p>Thrills · Adventure</p>
-            <a href="https://www.youtube.com/results?search_query=official+free+full+action+movie" target="_blank" rel="noopener noreferrer">Find Official Films ↗</a>
-          </div>
-        </article>
-
-        <article class="movie-card" data-title="Family animation movies">
-          <div class="poster indigo"><div class="poster-title">Family</div></div>
-          <div class="movie-info">
-            <h3>Family Movies</h3>
-            <p>All-ages entertainment</p>
-            <a href="https://www.youtube.com/results?search_query=official+free+full+family+movie" target="_blank" rel="noopener noreferrer">Find Official Films ↗</a>
-          </div>
-        </article>
-
-        <article class="movie-card" data-title="Independent world cinema">
-          <div class="poster silver"><div class="poster-title">Indie<br>Films</div></div>
-          <div class="movie-info">
-            <h3>Independent Cinema</h3>
-            <p>Discover new voices</p>
-            <a href="https://archive.org/details/movies" target="_blank" rel="noopener noreferrer">Explore Archive ↗</a>
-          </div>
-        </article>
-      </div>
-      <p class="empty" id="emptyMessage">No matching collection found. Try another title.</p>
-    </section>
-
-    <section class="section" id="free">
-      <div class="section-head">
-        <div>
-          <h2>Find Movies to Watch Free</h2>
-          <p>Browse external services and verify each film's official availability.</p>
-        </div>
-        <span class="pill">EXTERNAL SOURCES</span>
-      </div>
-
-      <div class="source-grid" id="sources">
-        <article class="source-card">
-          <div class="source-icon">▶️</div>
-          <h3>YouTube Official Channels</h3>
-          <p>Look for full films published by studios and authorized movie channels.</p>
-          <a href="https://www.youtube.com/results?search_query=official+full+Hindi+movie" target="_blank" rel="noopener noreferrer">Browse Hindi Movies ↗</a>
-        </article>
-        <article class="source-card">
-          <div class="source-icon">🎞️</div>
-          <h3>Internet Archive</h3>
-          <p>Explore older and public-domain films. Check the rights and licence of each item.</p>
-          <a href="https://archive.org/details/movies" target="_blank" rel="noopener noreferrer">Explore Films ↗</a>
-        </article>
-        <article class="source-card">
-          <div class="source-icon">🍿</div>
-          <h3>Tubi</h3>
-          <p>Browse a free, ad-supported catalogue. Availability depends on your country.</p>
-          <a href="https://tubitv.com/category/indian_cinema" target="_blank" rel="noopener noreferrer">Explore Indian Cinema ↗</a>
-        </article>
-      </div>
-
-      <div class="notice">
-        <strong>About CineNova:</strong> This first version is a discovery website, not a movie-hosting service.
-        External links lead to other platforms. A title appearing in search results does not guarantee that it is
-        free or licensed for embedding. Full movie playback and automatic movie metadata will be connected in a
-        later step after the relevant permissions and sources are verified.
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <a class="logo" href="#">Cine<span>Nova</span></a>
-    <span>Discover cinema. Find your next story.</span>
-    <span>© <span id="year"></span> CineNova</span>
-  </footer>
-
-  <script>
-    const searchInput = document.getElementById("movieSearch");
-    const searchButton = document.getElementById("searchButton");
-    const cards = [...document.querySelectorAll(".movie-card")];
-    const emptyMessage = document.getElementById("emptyMessage");
-
-    function searchMovies() {
-      const query = searchInput.value.trim().toLowerCase();
-      let visibleCount = 0;
-
-      cards.forEach(card => {
-        const title = (card.dataset.title + " " + card.innerText).toLowerCase();
-        const matches = title.includes(query);
-        card.style.display = matches ? "" : "none";
-        if (matches) visibleCount++;
-      });
-
-      emptyMessage.style.display = visibleCount ? "none" : "block";
-    }
-
-    searchButton.addEventListener("click", searchMovies);
-    searchInput.addEventListener("input", searchMovies);
-    searchInput.addEventListener("keydown", event => {
-      if (event.key === "Enter") searchMovies();
-    });
-
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
-</body>
-</html>
