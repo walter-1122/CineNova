@@ -1,0 +1,521 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090b12">
+  <meta name="description" content="CineNova — discover movies and find authorized free streaming options.">
+  <title>CineNova — Discover Your Next Movie</title>
+  <style>
+    :root {
+      --bg: #090b12;
+      --panel: #121622;
+      --muted: #a1a8b9;
+      --text: #f5f6fb;
+      --accent: #a78bfa;
+      --line: rgba(255,255,255,.1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    .nav {
+      height: 76px;
+      padding: 0 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(9,11,18,.9);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+    }
+    .logo {
+      font-size: 25px;
+      font-weight: 900;
+      letter-spacing: -1.2px;
+    }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 26px; color: #c7c9d5; font-size: 14px; }
+    .nav-links a:hover { color: white; }
+    .nav-cta {
+      background: var(--accent);
+      color: #171025;
+      padding: 11px 17px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .hero {
+      min-height: 490px;
+      padding: 90px 7% 75px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 78% 40%, rgba(117,77,219,.28), transparent 37%),
+        radial-gradient(ellipse at 5% 100%, rgba(35,110,160,.16), transparent 35%),
+        linear-gradient(120deg, #0b0d16 15%, #151226 70%, #0c0d16);
+    }
+    .hero::after {
+      content: "CINEMA";
+      position: absolute;
+      right: -25px;
+      bottom: -65px;
+      font-size: clamp(100px, 20vw, 270px);
+      font-weight: 1000;
+      letter-spacing: -15px;
+      color: rgba(255,255,255,.025);
+      pointer-events: none;
+    }
+    .hero-content { max-width: 690px; position: relative; z-index: 1; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(167,139,250,.3);
+      background: rgba(167,139,250,.08);
+      border-radius: 30px;
+      color: #d4c6ff;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    h1 {
+      font-size: clamp(44px, 7vw, 78px);
+      line-height: .99;
+      letter-spacing: -4px;
+      margin: 25px 0 20px;
+    }
+    h1 span {
+      background: linear-gradient(90deg, #c4b5fd, #8b9dff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p {
+      color: #b4b9c9;
+      line-height: 1.8;
+      max-width: 530px;
+      font-size: 16px;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 14px 19px;
+      border-radius: 11px;
+      font-weight: 800;
+      font-size: 14px;
+      transition: transform .2s, background .2s;
+      border: 1px solid var(--line);
+      cursor: pointer;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--accent); color: #171025; border-color: transparent; }
+    .btn-secondary { background: rgba(255,255,255,.045); color: white; }
+
+    .trust-row {
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+      margin-top: 34px;
+      color: #aeb4c5;
+      font-size: 12px;
+    }
+    .trust-row span::before { content: "✓"; color: #b9a6ff; margin-right: 7px; }
+
+    main { padding: 35px 6% 80px; }
+    .section { margin-top: 35px; }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .section-head h2 { margin: 0; font-size: 25px; letter-spacing: -.7px; }
+    .section-head p { color: var(--muted); margin: 8px 0 0; font-size: 13px; line-height: 1.6; }
+    .pill {
+      color: #c7b8ff;
+      border: 1px solid rgba(167,139,250,.28);
+      border-radius: 30px;
+      padding: 7px 11px;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .search-wrap {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0 25px;
+    }
+    .search-wrap input {
+      min-width: 0;
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 15px 16px;
+      color: white;
+      background: var(--panel);
+      outline: none;
+    }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .search-wrap button {
+      border: 0;
+      border-radius: 12px;
+      padding: 0 20px;
+      background: var(--accent);
+      color: #171025;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 17px;
+    }
+    .movie-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--panel);
+      transition: transform .25s, border-color .25s;
+    }
+    .movie-card:hover { transform: translateY(-5px); border-color: rgba(167,139,250,.55); }
+    .poster {
+      aspect-ratio: 3 / 4;
+      display: flex;
+      align-items: end;
+      padding: 17px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(145deg, #29213f, #111522 68%);
+    }
+    .poster::before {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      top: -55px;
+      right: -55px;
+      background: rgba(255,255,255,.08);
+      filter: blur(2px);
+    }
+    .poster::after {
+      content: "";
+      position: absolute;
+      inset: 40% 0 0;
+      background: linear-gradient(transparent, rgba(0,0,0,.65));
+    }
+    .poster .poster-title {
+      position: relative;
+      z-index: 1;
+      font-size: 25px;
+      font-weight: 950;
+      letter-spacing: -1px;
+      line-height: 1.05;
+      overflow-wrap: anywhere;
+    }
+    .poster.purple { background: linear-gradient(145deg, #6248a5, #1a172c 75%); }
+    .poster.blue { background: linear-gradient(145deg, #24698a, #111522 75%); }
+    .poster.rose { background: linear-gradient(145deg, #9d476a, #231521 75%); }
+    .poster.gold { background: linear-gradient(145deg, #9b7435, #211a13 75%); }
+    .poster.teal { background: linear-gradient(145deg, #237f77, #101c21 75%); }
+    .poster.red { background: linear-gradient(145deg, #9b343b, #221216 75%); }
+    .poster.indigo { background: linear-gradient(145deg, #414f9c, #141729 75%); }
+    .poster.silver { background: linear-gradient(145deg, #68758d, #171c29 75%); }
+    .movie-info { padding: 14px; }
+    .movie-info h3 { margin: 0 0 7px; font-size: 15px; }
+    .movie-info p { color: var(--muted); font-size: 12px; margin: 0 0 13px; }
+    .movie-info a {
+      display: block;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 10px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .movie-info a:hover { background: rgba(167,139,250,.12); }
+    .empty { color: var(--muted); padding: 25px 0; display: none; }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 15px;
+    }
+    .source-card {
+      padding: 23px;
+      border: 1px solid var(--line);
+      background: linear-gradient(140deg, #151927, #10121b);
+      border-radius: 15px;
+    }
+    .source-icon { font-size: 25px; }
+    .source-card h3 { margin: 15px 0 9px; font-size: 17px; }
+    .source-card p { color: var(--muted); line-height: 1.7; font-size: 13px; min-height: 62px; }
+    .source-card a { display: inline-block; color: #c7b8ff; font-weight: 800; font-size: 13px; margin-top: 5px; }
+
+    .notice {
+      border: 1px solid rgba(167,139,250,.2);
+      background: rgba(167,139,250,.055);
+      color: #c2c5d2;
+      padding: 17px 19px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.8;
+      margin-top: 28px;
+    }
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    footer strong { color: white; font-size: 16px; }
+
+    @media (max-width: 850px) {
+      .movie-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .source-grid { grid-template-columns: 1fr; }
+      .source-card p { min-height: auto; }
+      .nav { padding: 0 5%; }
+      .nav-links { gap: 13px; }
+    }
+    @media (max-width: 520px) {
+      .nav { height: 65px; }
+      .logo { font-size: 21px; }
+      .nav-links { display: none; }
+      .hero { min-height: 440px; padding: 65px 6%; }
+      h1 { letter-spacing: -2.5px; }
+      main { padding: 25px 5% 55px; }
+      .section-head h2 { font-size: 22px; }
+      .search-wrap { flex-direction: column; }
+      .search-wrap button { padding: 14px; }
+      .poster .poster-title { font-size: 22px; }
+      .movie-grid { gap: 11px; }
+      .movie-info { padding: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <a class="logo" href="#">Cine<span>Nova</span></a>
+    <nav class="nav-links">
+      <a href="#discover">Discover</a>
+      <a href="#free">Watch Free</a>
+      <a href="#sources">Sources</a>
+    </nav>
+    <a class="nav-cta" href="#free">Explore Movies ↗</a>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="eyebrow">✦ YOUR MOVIE UNIVERSE</div>
+      <h1>Find your next<br><span>favourite film.</span></h1>
+      <p>
+        Explore cinema from around the world, discover your next watch,
+        and find official sources offering movies for free.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#discover">Explore Collection →</a>
+        <a class="btn btn-secondary" href="#free">Find Free Movies ↗</a>
+      </div>
+      <div class="trust-row">
+        <span>Discover movies</span>
+        <span>Official sources</span>
+        <span>Built for movie fans</span>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="section" id="discover">
+      <div class="section-head">
+        <div>
+          <h2>Discover Movies</h2>
+          <p>Explore titles and search for their official availability.</p>
+        </div>
+        <span class="pill">CINENOVA COLLECTION</span>
+      </div>
+
+      <div class="search-wrap">
+        <input id="movieSearch" type="search" placeholder="Search a movie title..." aria-label="Search movie titles">
+        <button id="searchButton" type="button">Search</button>
+      </div>
+
+      <div class="movie-grid" id="movieGrid">
+        <article class="movie-card" data-title="Bollywood Hindi cinema">
+          <div class="poster purple"><div class="poster-title">Hindi<br>Cinema</div></div>
+          <div class="movie-info">
+            <h3>Bollywood Collection</h3>
+            <p>Hindi · Indian cinema</p>
+            <a href="https://www.youtube.com/results?search_query=official+full+Hindi+movie" target="_blank" rel="noopener noreferrer">Find Official Movies ↗</a>
+          </div>
+        </article>
+
+        <article class="movie-card" data-title="Hollywood international cinema">
+          <div class="poster blue"><div class="poster-title">Hollywood</div></div>
+          <div class="movie-info">
+            <h3>Hollywood Collection</h3>
+            <p>English · International</p>
+            <a href="https://www.youtube.com/results?search_query=official+full+Hollywood+movie+free" target="_blank" rel="noopener noreferrer">Find Official Movies ↗</a>
+          </div>
+        </article>
+
+        <article class="movie-card" data-title="South Indian Tamil Telugu cinema">
+          <div class="poster rose"><div class="poster-title">South<br>Cinema</div></div>
+          <div class="movie-info">
+            <h3>South Indian Collection</h3>
+            <p>Tamil · Telugu · Malayalam</p>
+            <a href="https://www.youtube.com/results?search_query=official+full+South+Indian+movie" target="_blank" rel="noopener noreferrer">Find Official Movies ↗</a>
+          </div>
+        </article>
+
+        <article class="movie-card" data-title="Classic public domain movies">
+          <div class="poster gold"><div class="poster-title">Classics</div></div>
+          <div class="movie-info">
+            <h3>Classic Cinema</h3>
+            <p>Explore older films</p>
+            <a href="https://archive.org/details/movies" target="_blank" rel="noopener noreferrer">Explore Archive ↗</a>
+          </div>
+        </article>
+
+        <article class="movie-card" data-title="Documentaries real stories">
+          <div class="poster teal"><div class="poster-title">Stories</div></div>
+          <div class="movie-info">
+            <h3>Documentaries</h3>
+            <p>Real stories · Learning</p>
+            <a href="https://www.youtube.com/results?search_query=official+free+full+documentary" target="_blank" rel="noopener noreferrer">Find Official Films ↗</a>
+          </div>
+        </article>
+
+        <article class="movie-card" data-title="Action adventure films">
+          <div class="poster red"><div class="poster-title">Action</div></div>
+          <div class="movie-info">
+            <h3>Action & Adventure</h3>
+            <p>Thrills · Adventure</p>
+            <a href="https://www.youtube.com/results?search_query=official+free+full+action+movie" target="_blank" rel="noopener noreferrer">Find Official Films ↗</a>
+          </div>
+        </article>
+
+        <article class="movie-card" data-title="Family animation movies">
+          <div class="poster indigo"><div class="poster-title">Family</div></div>
+          <div class="movie-info">
+            <h3>Family Movies</h3>
+            <p>All-ages entertainment</p>
+            <a href="https://www.youtube.com/results?search_query=official+free+full+family+movie" target="_blank" rel="noopener noreferrer">Find Official Films ↗</a>
+          </div>
+        </article>
+
+        <article class="movie-card" data-title="Independent world cinema">
+          <div class="poster silver"><div class="poster-title">Indie<br>Films</div></div>
+          <div class="movie-info">
+            <h3>Independent Cinema</h3>
+            <p>Discover new voices</p>
+            <a href="https://archive.org/details/movies" target="_blank" rel="noopener noreferrer">Explore Archive ↗</a>
+          </div>
+        </article>
+      </div>
+      <p class="empty" id="emptyMessage">No matching collection found. Try another title.</p>
+    </section>
+
+    <section class="section" id="free">
+      <div class="section-head">
+        <div>
+          <h2>Find Movies to Watch Free</h2>
+          <p>Browse external services and verify each film's official availability.</p>
+        </div>
+        <span class="pill">EXTERNAL SOURCES</span>
+      </div>
+
+      <div class="source-grid" id="sources">
+        <article class="source-card">
+          <div class="source-icon">▶️</div>
+          <h3>YouTube Official Channels</h3>
+          <p>Look for full films published by studios and authorized movie channels.</p>
+          <a href="https://www.youtube.com/results?search_query=official+full+Hindi+movie" target="_blank" rel="noopener noreferrer">Browse Hindi Movies ↗</a>
+        </article>
+        <article class="source-card">
+          <div class="source-icon">🎞️</div>
+          <h3>Internet Archive</h3>
+          <p>Explore older and public-domain films. Check the rights and licence of each item.</p>
+          <a href="https://archive.org/details/movies" target="_blank" rel="noopener noreferrer">Explore Films ↗</a>
+        </article>
+        <article class="source-card">
+          <div class="source-icon">🍿</div>
+          <h3>Tubi</h3>
+          <p>Browse a free, ad-supported catalogue. Availability depends on your country.</p>
+          <a href="https://tubitv.com/category/indian_cinema" target="_blank" rel="noopener noreferrer">Explore Indian Cinema ↗</a>
+        </article>
+      </div>
+
+      <div class="notice">
+        <strong>About CineNova:</strong> This first version is a discovery website, not a movie-hosting service.
+        External links lead to other platforms. A title appearing in search results does not guarantee that it is
+        free or licensed for embedding. Full movie playback and automatic movie metadata will be connected in a
+        later step after the relevant permissions and sources are verified.
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="logo" href="#">Cine<span>Nova</span></a>
+    <span>Discover cinema. Find your next story.</span>
+    <span>© <span id="year"></span> CineNova</span>
+  </footer>
+
+  <script>
+    const searchInput = document.getElementById("movieSearch");
+    const searchButton = document.getElementById("searchButton");
+    const cards = [...document.querySelectorAll(".movie-card")];
+    const emptyMessage = document.getElementById("emptyMessage");
+
+    function searchMovies() {
+      const query = searchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const title = (card.dataset.title + " " + card.innerText).toLowerCase();
+        const matches = title.includes(query);
+        card.style.display = matches ? "" : "none";
+        if (matches) visibleCount++;
+      });
+
+      emptyMessage.style.display = visibleCount ? "none" : "block";
+    }
+
+    searchButton.addEventListener("click", searchMovies);
+    searchInput.addEventListener("input", searchMovies);
+    searchInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") searchMovies();
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
