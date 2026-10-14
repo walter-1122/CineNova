@@ -1,1 +1,278 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080911"><title>Sign in · CineNova</title><link rel="stylesheet" href="assets/style.css"></head><body class="login-page"><div class="topline">A WORLD OF STORIES · ONE CINEMATIC DESTINATION</div><main class="login-main"><div class="form-card"><a class="logo" href="login.html">Cine<span>Nova</span></a><div class="kicker" style="margin-top:24px">Welcome to your cinema space</div><h1>Sign in to <span style="color:#c7b5ff">CineNova.</span></h1><p>Sign in or create a demo account to continue to the movie discovery experience.</p><form id="loginForm"><div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" placeholder="you@example.com" required autocomplete="email"></div><div class="field"><label for="password">Password</label><input id="password" name="password" type="password" placeholder="Enter any password for demo" required autocomplete="current-password"></div><button class="btn btn-primary" type="submit">Sign in ↗</button></form><div style="text-align:center;margin:19px 0 8px;color:#a3a6bb;font-size:12px">New here? <a href="#signup" id="showSignup" style="color:#d0c1ff;font-weight:700">Create an account</a></div><form id="signupForm" hidden><div class="field"><label for="signupEmail">Email address</label><input id="signupEmail" name="email" type="email" placeholder="you@example.com" required></div><div class="field"><label for="signupPassword">Create password</label><input id="signupPassword" name="password" type="password" minlength="6" placeholder="At least 6 characters" required></div><button class="btn btn-primary" type="submit">Create demo account ↗</button></form><div class="notice"><b>Important:</b> this is a front-end demo login only. It stores the email in this browser and does not securely authenticate users or protect the site from direct access. Real login requires Supabase Auth or another backend.</div></div></main><footer class="footer"><div class="wrap footer-inner"><span>© 2026 CineNova</span><span>Discover stories without borders.</span></div></footer><div class="toast" role="status"></div><script src="assets/app.js"></script><script>document.getElementById('showSignup').addEventListener('click',e=>{e.preventDefault();document.getElementById('loginForm').hidden=true;document.getElementById('signupForm').hidden=false;document.querySelector('.form-card h1').textContent='Create your account.';document.querySelector('.form-card p').textContent='Create a demo profile to continue.';});</script></body></html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d1b">
+  <title>Login | CineNova</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 16px;
+      background:
+        radial-gradient(ellipse at top, #172957 0%, transparent 55%),
+        #080d1b;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 430px;
+      padding: 36px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 22px;
+      background: rgba(17,25,46,.94);
+      box-shadow: 0 24px 70px rgba(0,0,0,.35);
+      color: #fff;
+    }
+
+    .login-logo {
+      display: block;
+      margin-bottom: 28px;
+      color: #fff;
+      font-size: 30px;
+      font-weight: 800;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .login-logo span { color: #f5b82e; }
+
+    .login-card h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      text-align: center;
+    }
+
+    .login-subtitle {
+      margin: 0 0 26px;
+      color: #aab4ca;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .login-form { display: grid; gap: 16px; }
+
+    .login-form label {
+      display: block;
+      margin-bottom: 8px;
+      color: #e1e7f3;
+      font-size: 14px;
+    }
+
+    .login-form input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #34415f;
+      border-radius: 10px;
+      outline: none;
+      background: #0b1224;
+      color: #fff;
+      font: inherit;
+    }
+
+    .login-form input:focus {
+      border-color: #f5b82e;
+      box-shadow: 0 0 0 3px rgba(245,184,46,.12);
+    }
+
+    .password-wrap { position: relative; }
+
+    .password-wrap input { padding-right: 76px; }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      color: #f5b82e;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .login-submit {
+      width: 100%;
+      margin-top: 5px;
+      padding: 14px;
+      border: 0;
+      border-radius: 10px;
+      background: #f5b82e;
+      color: #111827;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .login-submit:hover { background: #ffd166; }
+
+    .login-switch {
+      margin: 22px 0 0;
+      color: #b6bfd2;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .login-switch button {
+      border: 0;
+      background: transparent;
+      color: #f5b82e;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .login-message {
+      margin-top: 16px;
+      color: #ffd166;
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .login-back {
+      display: block;
+      margin-top: 22px;
+      color: #aab4ca;
+      text-align: center;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .login-back:hover { color: #fff; }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 480px) {
+      .login-card { padding: 26px 20px; }
+      .login-card h1 { font-size: 25px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="login-page">
+    <section class="login-card">
+      <a class="login-logo" href="index.html">Cine<span>Nova</span></a>
+
+      <div id="loginPanel">
+        <h1>Welcome Back</h1>
+        <p class="login-subtitle">Sign in to continue your movie journey.</p>
+
+        <form class="login-form" id="loginForm">
+          <div>
+            <label for="loginEmail">Email address</label>
+            <input id="loginEmail" name="email" type="email"
+                   placeholder="you@example.com" autocomplete="email" required>
+          </div>
+
+          <div>
+            <label for="loginPassword">Password</label>
+            <div class="password-wrap">
+              <input id="loginPassword" name="password" type="password"
+                     placeholder="Enter your password"
+                     autocomplete="current-password" required minlength="6">
+              <button class="toggle-password" type="button"
+                      data-toggle="loginPassword">Show</button>
+            </div>
+          </div>
+
+          <button class="login-submit" type="submit">Sign In</button>
+        </form>
+
+        <p class="login-switch">
+          New to CineNova?
+          <button type="button" id="showSignup">Create account</button>
+        </p>
+      </div>
+
+      <div id="signupPanel" hidden>
+        <h1>Create Account</h1>
+        <p class="login-subtitle">Join CineNova and build your movie list.</p>
+
+        <form class="login-form" id="signupForm">
+          <div>
+            <label for="signupName">Your name</label>
+            <input id="signupName" name="name" type="text"
+                   placeholder="Enter your name" autocomplete="name" required>
+          </div>
+
+          <div>
+            <label for="signupEmail">Email address</label>
+            <input id="signupEmail" name="email" type="email"
+                   placeholder="you@example.com" autocomplete="email" required>
+          </div>
+
+          <div>
+            <label for="signupPassword">Create password</label>
+            <div class="password-wrap">
+              <input id="signupPassword" name="password" type="password"
+                     placeholder="At least 6 characters"
+                     autocomplete="new-password" required minlength="6">
+              <button class="toggle-password" type="button"
+                      data-toggle="signupPassword">Show</button>
+            </div>
+          </div>
+
+          <button class="login-submit" type="submit">Create Account</button>
+        </form>
+
+        <p class="login-switch">
+          Already have an account?
+          <button type="button" id="showLogin">Sign in</button>
+        </p>
+      </div>
+
+      <p class="login-message" id="loginMessage" role="status" aria-live="polite"></p>
+      <a class="login-back" href="index.html">← Back to CineNova</a>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    const loginPanel = document.getElementById("loginPanel");
+    const signupPanel = document.getElementById("signupPanel");
+    const message = document.getElementById("loginMessage");
+
+    document.getElementById("showSignup").addEventListener("click", () => {
+      loginPanel.hidden = true;
+      signupPanel.hidden = false;
+      message.textContent = "";
+    });
+
+    document.getElementById("showLogin").addEventListener("click", () => {
+      signupPanel.hidden = true;
+      loginPanel.hidden = false;
+      message.textContent = "";
+    });
+
+    document.querySelectorAll("[data-toggle]").forEach(button => {
+      button.addEventListener("click", () => {
+        const field = document.getElementById(button.dataset.toggle);
+        const showing = field.type === "password";
+        field.type = showing ? "text" : "password";
+        button.textContent = showing ? "Hide" : "Show";
+      });
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", event => {
+      event.preventDefault();
+      message.textContent =
+        "Login UI is ready. Connect Supabase Auth to enable secure sign-in.";
+    });
+
+    document.getElementById("signupForm").addEventListener("submit", event => {
+      event.preventDefault();
+      message.textContent =
+        "Sign-up UI is ready. Connect Supabase Auth to create real accounts.";
+    });
+  </script>
+</body>
+</html>
